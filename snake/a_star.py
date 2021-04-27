@@ -85,25 +85,46 @@ class Game:
             self.open = [self.open[i] for i in range(len(self.open)) if not self.open[i] == current]
             # Append selected node to closed_points
             self.closed.append(current)
-            
-            # Explore neighbors of the selected node
-            current.generate_neighbors()
-            for neighbor in current.neighbors:
-                if neighbor not in self.closed and neighbor not in self.obstacles and neighbor not in self.snake:
-                    # If neighbor is not in self.open increase the cost of path and append neighbor to self.open
-                    if neighbor not in self.open:
-                        neighbor.g = current.g+1
-                        self.open.append(neighbor)
-                    neighbor.h = self.calculate_h(neighbor)
-                    neighbor.f = neighbor.g + neighbor.h
-                    neighbor.origin = current
-
+            # Check if we have reached the goal state            
             if current == self.food:
                 # Based on its origin determine the direction in which the snake will move
                 while current.origin:
                     self.path.append(current)
                     current = current.origin
                 return
+            # Explore neighbors of the selected node
+            current.generate_neighbors()
+            for neighbor in current.neighbors:
+                g_temp = current.g+1
+                if neighbor not in self.closed and neighbor not in self.obstacles and neighbor not in self.snake:
+                    # If neighbor is not in self.open increase the cost of path and append neighbor to self.open
+                    if neighbor not in self.open:
+                        neighbor.h = self.calculate_h(neighbor)
+                        neighbor.g = g_temp
+                        neighbor.f = neighbor.g + neighbor.h
+                        neighbor.origin = current
+                        self.open.append(neighbor)
+                     # If neighbor is in self.open
+                    if neighbor in self.open:
+                        old_neighbor = [x for x in self.open if x == neighbor][0]
+                        if old_neighbor.g > g_temp:
+                            old_neighbor.h = self.calculate_h(neighbor)
+                            old_neighbor.g = g_temp
+                            old_neighbor.f = neighbor.g + neighbor.h
+                            old_neighbor.origin = current
+                elif neighbor in self.closed and neighbor not in self.obstacles and neighbor not in self.snake:
+                    old_neighbor = [x for x in self.closed if x == neighbor][0]
+                    if old_neighbor.g > g_temp:
+                        old_neighbor.h = self.calculate_h(neighbor)
+                        old_neighbor.g = g_temp
+                        old_neighbor.f = neighbor.g + neighbor.h
+                        old_neighbor.origin = current
+                        old_neighbor_children = old_neighbor.neighbors
+                        for child in old_neighbor_children:
+                            child.h = self.calculate_h(neighbor)
+                            child.g = g_temp
+                            child.f = neighbor.g + neighbor.h
+                            child.origin = current
         self.path = []
 
     # Function to randomly place food in the game
