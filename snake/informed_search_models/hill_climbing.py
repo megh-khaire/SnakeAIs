@@ -1,6 +1,8 @@
 import random
 import pygame
-from constants import Direction, BLOCK_SIZE, INITIAL_SPEED, BLACK, BLUE, GREEN, RED, WHITE, SPEEDUP, OBSTACLE_THRESHOLD, SPEED_THRESHOLD, WIDTH, HEIGHT
+from snake.resources.constants import WIDTH, HEIGHT, BLOCK_SIZE, OBSTACLE_THRESHOLD, INITIAL_SPEED, SPEED_THRESHOLD, SPEEDUP
+from snake.resources.colors import WHITE, RED, BLUE, GREEN, BLACK
+from snake.resources.directions import Direction
 
 class Point:
     def __init__(self, x, y):

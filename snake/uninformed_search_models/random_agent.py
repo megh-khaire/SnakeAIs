@@ -1,22 +1,23 @@
 import random
 import pygame
-from constants import Direction, BLOCK_SIZE, INITIAL_SPEED, BLACK, BLUE, GREEN, RED, WHITE, SPEEDUP, OBSTACLE_THRESHOLD, SPEED_THRESHOLD,  WIDTH, HEIGHT
+from snake.resources.constants import WIDTH, HEIGHT, BLOCK_SIZE, OBSTACLE_THRESHOLD, INITIAL_SPEED, SPEED_THRESHOLD, SPEEDUP
+from snake.resources.colors import WHITE, RED, BLUE, GREEN, BLACK
+from snake.resources.directions import Direction
 
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.h = 0
 
     def __eq__(self, point) : 
         if self.__class__ != point.__class__:
             return False
-        return self.x == point.x and self.y == point.y
+        return self.__dict__ == point.__dict__
 
     # Function to plot draw point
     def plot(self, display, color):
         pygame.draw.rect(display, color, pygame.Rect(self.x, self.y, BLOCK_SIZE, BLOCK_SIZE))
-    
+
 class Game:
     def __init__(self, width=WIDTH, height=HEIGHT):
         self.width = width
@@ -92,24 +93,17 @@ class Game:
         self.display.blit(text, [0, 0])
         pygame.display.flip()
 
-    def calculate_h(self, point):
-        return abs(self.food.x - point.x) + abs(self.food.y - point.y)
-
     # Function to select random direction for the snake to move
-    def hill_climbing(self):
-        neighbors = []
+    def random_movement(self):
         directions = [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]
-        # Generating valid neighbors
-        for direction in directions:
-            neighbor = self.move_snake(direction)
-            if not self.is_collision(neighbor, 0):
-                neighbor.h = self.calculate_h(neighbor)
-                neighbors.append((neighbor, direction))
-        if not neighbors:
-            return False
-        _, direction = min(neighbors, key=lambda x: x[0].h)
-        self.direction = direction
-        return True
+        while True:
+            index = random.randint(0, len(directions)-1)
+            random_point = self.move_snake(directions[index])
+            if self.is_collision(random_point, 0):
+                index = random.randint(0, len(directions)-1)
+            else:
+                self.direction = directions[index]
+                break
 
     def process(self):
         # Checking user input
@@ -118,10 +112,7 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
-        path_found = self.hill_climbing()
-        if not path_found:
-            return True, self.score
+        self.random_movement()
         # Moving snake
         self.head = self.move_snake(self.direction)
         self.snake.insert(0, self.head)

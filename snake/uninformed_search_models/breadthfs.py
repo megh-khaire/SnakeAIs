@@ -1,12 +1,13 @@
 import random
 import pygame
-from constants import Direction, BLOCK_SIZE, INITIAL_SPEED, BLACK, BLUE, GREEN, RED, WHITE, SPEEDUP, OBSTACLE_THRESHOLD, SPEED_THRESHOLD, WIDTH, HEIGHT
+from snake.resources.constants import WIDTH, HEIGHT, BLOCK_SIZE, OBSTACLE_THRESHOLD, INITIAL_SPEED, SPEED_THRESHOLD, SPEEDUP
+from snake.resources.colors import WHITE, RED, BLUE, GREEN, BLACK
+from snake.resources.directions import Direction
 
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.h = 0
         self.neighbors = []
         self.origin = None
 
@@ -67,10 +68,6 @@ class Game:
         elif point.x > point.origin.x and point.y == point.origin.y:
             self.direction = Direction.RIGHT
 
-    # Function to calculate heuristic - Manhatten distance between selected node and goal state
-    def calculate_h(self, point):
-        return abs(self.food.x - point.x) + abs(self.food.y - point.y)
-
     # Function to implement A* algorithm
     def bfs(self):
         self.path = [self.head]
@@ -78,7 +75,7 @@ class Game:
         self.open = [self.head]
         while self.open:
             # Select start node as the node with lowest h value
-            current = min(self.open, key=lambda x: x.h)
+            current = self.open.pop(0)
             # Remove selected node from self.open
             self.open = [self.open[i] for i in range(len(self.open)) if not self.open[i] == current]
             # Append selected node to closed_points
@@ -90,13 +87,13 @@ class Game:
                     self.path.append(current)
                     current = current.origin
                 return
+
             # Explore neighbors of the selected node
             current.generate_neighbors()
             for neighbor in current.neighbors:
                 if neighbor not in self.closed and neighbor not in self.obstacles and neighbor not in self.snake:
                     # If neighbor is not in self.open increase the cost of path and append neighbor to self.open
                     if neighbor not in self.open:
-                        neighbor.h = self.calculate_h(neighbor)
                         neighbor.origin = current
                         self.open.append(neighbor)
         self.path = []
