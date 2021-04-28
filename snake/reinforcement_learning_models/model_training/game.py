@@ -155,7 +155,7 @@ class Game:
             self.snake.pop()
 
         # Updating UI and Clock
-        speed = INITIAL_SPEED + (self.score//SPEED_THRESHOLD)*SPEEDUP
+        speed = INITIAL_SPEED + SPEED_THRESHOLD
         self.update_ui()
         self.clock.tick(speed)
 
