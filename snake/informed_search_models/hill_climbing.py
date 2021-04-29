@@ -4,19 +4,21 @@ from snake.resources.constants import WIDTH, HEIGHT, BLOCK_SIZE, OBSTACLE_THRESH
 from snake.resources.colors import WHITE, RED, BLUE, GREEN, BLACK
 from snake.resources.directions import Direction
 
+
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def __eq__(self, point) : 
+    def __eq__(self, point):
         if self.__class__ != point.__class__:
             return False
         return self.__dict__ == point.__dict__
-    
+
     # Function to plot draw point
     def plot(self, display, color):
         pygame.draw.rect(display, color, pygame.Rect(self.x, self.y, BLOCK_SIZE, BLOCK_SIZE))
+
 
 class Game:
     def __init__(self, width=WIDTH, height=HEIGHT):
@@ -33,11 +35,11 @@ class Game:
         self.food = None
         self.generate_obstacles()
         self.place_food()
-        
+
     # Function to randomly place food in the game
     def place_food(self):
-        x = random.randint(0, (self.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE 
-        y = random.randint(0, (self.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+        x = random.randint(0, (self.width-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+        y = random.randint(0, (self.height-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake or self.food in self.obstacles:
             self.place_food()
@@ -45,12 +47,12 @@ class Game:
     # Function to randomly generate obstacles in the game
     def generate_obstacles(self):
         for i in range(0, OBSTACLE_THRESHOLD):
-            x = random.randint(0, (self.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE 
-            y = random.randint(0, (self.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+            x = random.randint(0, (self.width-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+            y = random.randint(0, (self.height-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
             obstacle = Point(x, y)
             if obstacle not in self.snake:
                 self.obstacles.append(obstacle)
-            
+
     def move_snake(self, direction):
         x = self.head.x
         y = self.head.y
@@ -61,7 +63,7 @@ class Game:
         elif direction == Direction.DOWN:
             y += BLOCK_SIZE
         elif direction == Direction.UP:
-            y -= BLOCK_SIZE 
+            y -= BLOCK_SIZE
         return Point(x, y)
 
     def is_collision(self, point, start=1):
@@ -116,7 +118,7 @@ class Game:
                     return True
                 else:
                     _ = directions.pop(index)
-        
+
     def process(self):
         directions = [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]
         # Checking user input
@@ -139,7 +141,7 @@ class Game:
             self.score += 1
             self.place_food()
         else:
-            #Remove the last element from the snake's body as we have added a new head
+            # Remove the last element from the snake's body as we have added a new head
             self.snake.pop()
 
         # Updating UI and Clock
@@ -148,6 +150,7 @@ class Game:
         self.clock.tick(speed)
 
         return False, self.score
+
 
 if __name__ == '__main__':
     pygame.init()
