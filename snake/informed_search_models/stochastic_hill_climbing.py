@@ -98,12 +98,12 @@ class Game:
     def calculate_h(self, point):
         return abs(self.food.x - point.x) + abs(self.food.y - point.y)
 
-    # Function to select random direction for the snake to move
+    # Function to select a direction for the snake to move using stochastic hill climbing (random selection of a better neighbor)
     def hill_climbing(self, directions):
         while True:
             if len(directions) == 0:
                 return False
-            # Generating valid neighbor
+            # Generating a valid neighbor randomly
             index = random.randint(0, len(directions)-1)
             neighbor = self.move_snake(directions[index])
             if self.is_collision(neighbor, 0):
@@ -113,7 +113,7 @@ class Game:
                 current_h = self.calculate_h(self.head)
                 neighbor_h = self.calculate_h(neighbor)
                 # Climbing the hill if generated neighbor is better
-                if neighbor_h <= current_h:
+                if neighbor_h < current_h:
                     self.direction = directions[index]
                     return True
                 else:

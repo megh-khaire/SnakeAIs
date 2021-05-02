@@ -99,21 +99,21 @@ class Game:
     def calculate_h(self, point):
         return abs(self.food.x - point.x) + abs(self.food.y - point.y)
 
-    # Function to select random direction for the snake to move
+    # Function to select a direction for the snake to move using hill climbing algorithm (selection of first better neighbor)
     def hill_climbing(self):
-        neighbors = []
         directions = [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]
         # Generating valid neighbors
+        current_h = self.calculate_h(self.head)
         for direction in directions:
             neighbor = self.move_snake(direction)
             if not self.is_collision(neighbor, 0):
+                # Checking if the generated neighbor is better than current state
                 neighbor.h = self.calculate_h(neighbor)
-                neighbors.append((neighbor, direction))
-        if not neighbors:
-            return False
-        _, direction = min(neighbors, key=lambda x: x[0].h)
-        self.direction = direction
-        return True
+                # Climbing the hill if generated neighbor is better
+                if neighbor.h < current_h:
+                    self.direction = direction
+                    return True
+        return False
 
     def process(self):
         # Checking user input
