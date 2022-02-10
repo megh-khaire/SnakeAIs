@@ -3,11 +3,12 @@ import random
 import numpy as np
 from collections import deque
 
-from game import Game, Point
+from snake.main.point import Point
 from snake.resources.constants import BLOCK_SIZE
 from snake.resources.directions import Direction
+from snake.reinforcement_learning_models.model_training.ml_game import ReinforcementLearning
 from model import Linear_QNet, QTrainer
-from helper import plot
+from plotter import plot
 
 MAX_MEMORY = 100000
 BATCH_SIZE = 1000
@@ -38,22 +39,22 @@ class Agent:
 
         state = [
             # Danger straight
-            (dir_r and game.is_collision(point_r)) or
-            (dir_l and game.is_collision(point_l)) or
-            (dir_u and game.is_collision(point_u)) or
-            (dir_d and game.is_collision(point_d)),
+            (dir_r and game.detect_random_point_collision(point_r)) or
+            (dir_l and game.detect_random_point_collision(point_l)) or
+            (dir_u and game.detect_random_point_collision(point_u)) or
+            (dir_d and game.detect_random_point_collision(point_d)),
 
             # Danger right
-            (dir_u and game.is_collision(point_r)) or
-            (dir_d and game.is_collision(point_l)) or
-            (dir_l and game.is_collision(point_u)) or
-            (dir_r and game.is_collision(point_d)),
+            (dir_u and game.detect_random_point_collision(point_r)) or
+            (dir_d and game.detect_random_point_collision(point_l)) or
+            (dir_l and game.detect_random_point_collision(point_u)) or
+            (dir_r and game.detect_random_point_collision(point_d)),
 
             # Danger left
-            (dir_d and game.is_collision(point_r)) or
-            (dir_u and game.is_collision(point_l)) or
-            (dir_r and game.is_collision(point_u)) or
-            (dir_l and game.is_collision(point_d)),
+            (dir_d and game.detect_random_point_collision(point_r)) or
+            (dir_u and game.detect_random_point_collision(point_l)) or
+            (dir_r and game.detect_random_point_collision(point_u)) or
+            (dir_l and game.detect_random_point_collision(point_d)),
 
             # Move direction
             dir_l,
@@ -89,7 +90,7 @@ class Agent:
         self.epsilon = EPSILON_THRESHOLD - self.n_games
         final_move = [0, 0, 0]
         if random.randint(0, RANDOMNESS_THRESHOLD) < self.epsilon:
-            move = random.randint(0, len(final_move)-1)
+            move = random.randint(0, len(final_move) - 1)
             final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
@@ -106,16 +107,15 @@ def train():
     total_score = 0
     record = 0
     agent = Agent()
-    game = Game()
+    game = ReinforcementLearning("RL")
     while True:
         # get old state
         state_old = agent.get_state(game)
 
         # get move
         final_move = agent.get_action(state_old)
-
         # perform move and get new state
-        done, reward, score = game.process(final_move)
+        done, reward, score = game.main(final_move)
         state_new = agent.get_state(game)
 
         # train short memory
@@ -127,6 +127,7 @@ def train():
         if done:
             # train long memory and plot results
             game.reset()
+            game.frame_iteration = 0
             agent.n_games += 1
             agent.train_long_memory()
 

@@ -1,5 +1,8 @@
-#vscode files
+# vscode files
 .vscode
+
+# models
+snake/reinforcement_learning_models/model_training/model
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
