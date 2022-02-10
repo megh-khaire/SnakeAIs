@@ -9,6 +9,8 @@ SnakeAIs puts a twist on the traditional snake game by using various `state-spac
 The idea behind this project was to understand how these algorithms work by applying them to a game for better visualization and comparison.
 The ultimate objective is to create gamified tutorials for explaining each of these state-space algorithms though examples based on the game.
 
+![Game Demo](https://github.com/megh-khaire/SnakeAIs/blob/main/images/demo.gif)
+
 ## Installation
 
 - Make sure you have python installed.
