@@ -58,7 +58,7 @@ The ultimate objective is to create gamified tutorials for explaining each of th
 
         python main.py "human"
 
-> _NOTE:_ The random search algorithm moves the snake randomly throught the state-space and also avoids obstacles while doing so resulting in an endless loop.
+_Note: The random search algorithm moves the snake randomly throught the state-space and also avoids obstacles while doing so resulting in an endless loop._
 
 ## Tinkering with the Configurations
 
@@ -72,5 +72,4 @@ The ultimate objective is to create gamified tutorials for explaining each of th
   It is also the framerate at which the game runs when the snake while using the search algorithm.
 - `snake\resources\colors.py` defines color constants used throughtout the game. These colors can be modified to change the color of the grid, snake, food and obstacles.
 
-> _Note:_ The difficulty configurations are only applicable when the user controls the snake's action.
-          In cases where the algorithm controls the snake a fixed difficulty rate (FIXED_AUTO_SPEED) is used.
+_Note: The difficulty configurations are only applicable when the user controls the snake's action. In cases where the algorithm controls the snake a fixed difficulty rate (FIXED_AUTO_SPEED) is used._
